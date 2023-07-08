@@ -45,14 +45,7 @@ public class AddressService {
     public AddressesResponse batchCreateAddresses(AddressesRequest addressesRequest) {
         final List<AddressRequest> addressRequestList = addressesRequest.getAddresses();
 
-        final boolean hasDuplicatedAddresses = addressRequestList
-                .stream()
-                .anyMatch(addressRequest -> addressRequestList
-                        .stream()
-                        .filter(addressReq -> addressReq.equals(addressRequest))
-                        .count() > 1);
-
-        if (hasDuplicatedAddresses)
+        if (addressRequestList.stream().distinct().count() < addressRequestList.size())
             throw new DuplicatedAddressException("Duplicated addresses in batch create operation");
 
         final List<AddressResponse> addressResponseList = addressRequestList
@@ -67,9 +60,9 @@ public class AddressService {
         final Pageable pageable = PageRequest.of(currentPage, pageSize);
         final List<Address> addressList = addressRepository.findAllByZipCode(zipCode, pageable);
         return new AddressesResponse(addressList
-                                             .stream()
-                                             .map(addressMapper::toAddressResponse)
-                                             .collect(Collectors.toList()));
+                .stream()
+                .map(addressMapper::toAddressResponse)
+                .collect(Collectors.toList()));
     }
 
     private void setCepService(Integer version) {
