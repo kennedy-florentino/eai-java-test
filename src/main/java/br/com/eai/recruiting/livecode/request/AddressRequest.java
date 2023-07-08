@@ -18,6 +18,7 @@ public class AddressRequest {
     private Integer version;
 
     @EqualsAndHashCode.Include
+    @NotEmpty
     @Pattern(regexp = "\\d{8}", message = "Invalid zipCode (Valid example: 06420100)")
     @Schema(defaultValue = "06420100")
     private String zipCode;
